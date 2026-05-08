@@ -122,6 +122,21 @@ export class BoardRenderer {
           sqEl.appendChild(pieceEl);
         }
 
+        // Move Glyph (Brilliant, Blunder, etc)
+        if (this.lastMove && square === this.lastMove.to && this.lastMove.classification) {
+          const glyphMap = {
+            brilliant: '!!', great: '!', best: '★', good: '✔',
+            inaccuracy: '?!', mistake: '?', blunder: '??'
+          };
+          const text = glyphMap[this.lastMove.classification] || '';
+          if (text) {
+            const glyphEl = document.createElement('div');
+            glyphEl.className = `move-glyph ${this.lastMove.classification}`;
+            glyphEl.textContent = text;
+            sqEl.appendChild(glyphEl);
+          }
+        }
+
         this.container.appendChild(sqEl);
       }
     }

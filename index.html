@@ -135,6 +135,7 @@
           <div class="panel-tabs">
             <button class="panel-tab active" data-tab="moves" id="tab-moves">Moves</button>
             <button class="panel-tab" data-tab="analysis" id="tab-analysis">Analysis</button>
+            <button class="panel-tab" data-tab="review" id="tab-review">Review</button>
             <button class="panel-tab" data-tab="info" id="tab-info">Info</button>
           </div>
 
@@ -154,6 +155,16 @@
             </div>
             <div id="engine-lines" class="engine-lines">
               <div class="engine-placeholder">Click "Start Engine" to begin analysis</div>
+            </div>
+          </div>
+
+          <!-- Review Tab -->
+          <div id="panel-review" class="panel-content">
+            <div class="review-summary" id="review-summary-content">
+              <div class="engine-placeholder">
+                <p style="margin-bottom:16px">Analyze your game to find brilliant moves, mistakes, and blunders.</p>
+                <button id="btn-start-review" class="btn btn-primary" style="width:100%">Start Game Review</button>
+              </div>
             </div>
           </div>
 

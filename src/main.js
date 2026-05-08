@@ -147,6 +147,9 @@ class ChessApp {
     // Engine toggle
     this.bindBtn('btn-toggle-engine', () => this.toggleEngine());
 
+    // Review start
+    this.bindBtn('btn-start-review', () => this.startReview());
+
     // Info buttons
     this.bindBtn('btn-copy-fen', () => copyToClipboard(this.game.fen()));
     this.bindBtn('btn-export-pgn', () => downloadFile('game.pgn', this.game.exportPGN()));
@@ -489,18 +492,72 @@ class ChessApp {
       showToast('Play a game first to review it!', 'info');
       return;
     }
-    showToast('Reviewing game...', 'info');
+    
+    // Switch to Review tab
+    document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel-content').forEach(p => p.classList.remove('active'));
+    const reviewTab = document.getElementById('tab-review');
+    const reviewPanel = document.getElementById('panel-review');
+    if (reviewTab) reviewTab.classList.add('active');
+    if (reviewPanel) reviewPanel.classList.add('active');
+    
+    const summaryEl = document.getElementById('review-summary-content');
+    if (summaryEl) summaryEl.innerHTML = '<div class="engine-placeholder">Analyzing game...</div>';
+
     this.review.onProgress = (i, total) => {
       const el = document.getElementById('status-text');
       if (el) el.textContent = `Reviewing: ${i+1}/${total}`;
+      if (summaryEl) summaryEl.innerHTML = `<div class="engine-placeholder">Analyzing move ${i+1} of ${total}...</div>`;
     };
+
     const summary = await this.review.review(this.game.getState().history);
     if (summary) {
       summary.moves.forEach((m, i) => {
         if (this.game.history[i]) this.game.history[i].classification = m.classification;
       });
       this.moveList.render();
-      showToast(`White: ${summary.whiteAccuracy}% | Black: ${summary.blackAccuracy}%`, 'success', 6000);
+      
+      if (summaryEl) {
+        summaryEl.innerHTML = `
+          <div class="review-header">Game Review</div>
+          <div class="accuracy-container">
+            <div class="accuracy-circle">
+              <span class="accuracy-value" style="color:var(--color-text-primary)">${summary.whiteAccuracy}%</span>
+              <span class="accuracy-label">White Accuracy</span>
+            </div>
+            <div class="accuracy-circle">
+              <span class="accuracy-value" style="color:var(--color-text-secondary)">${summary.blackAccuracy}%</span>
+              <span class="accuracy-label">Black Accuracy</span>
+            </div>
+          </div>
+          <div class="review-stats">
+            <div class="stat-row">
+              <span class="stat-label"><span class="move-list-icon brilliant">!!</span> Brilliant</span>
+              <span class="stat-count">${summary.stats.white.brilliant} - ${summary.stats.black.brilliant}</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label"><span class="move-list-icon great">!</span> Great</span>
+              <span class="stat-count">${summary.stats.white.great} - ${summary.stats.black.great}</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label"><span class="move-list-icon best">★</span> Best Move</span>
+              <span class="stat-count">${summary.stats.white.best} - ${summary.stats.black.best}</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label"><span class="move-list-icon inaccuracy">?!</span> Inaccuracy</span>
+              <span class="stat-count">${summary.stats.white.inaccuracy} - ${summary.stats.black.inaccuracy}</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label"><span class="move-list-icon mistake">?</span> Mistake</span>
+              <span class="stat-count">${summary.stats.white.mistake} - ${summary.stats.black.mistake}</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label"><span class="move-list-icon blunder">??</span> Blunder</span>
+              <span class="stat-count">${summary.stats.white.blunder} - ${summary.stats.black.blunder}</span>
+            </div>
+          </div>
+        `;
+      }
     }
   }
 

@@ -21,13 +21,22 @@ export class MoveList {
       numEl.textContent = moveNum + '.';
       row.appendChild(numEl);
 
+      const glyphMap = {
+        brilliant: '!!', great: '!', best: '★', good: '✔',
+        inaccuracy: '?!', mistake: '?', blunder: '??'
+      };
+
       // White move
       const whiteCell = document.createElement('span');
       whiteCell.className = 'move-cell';
       whiteCell.textContent = history[i].san;
       whiteCell.dataset.index = i;
       if (i === currentIdx) whiteCell.classList.add('active');
-      if (history[i].classification) whiteCell.classList.add(history[i].classification);
+      if (history[i].classification) {
+        whiteCell.classList.add(history[i].classification);
+        const text = glyphMap[history[i].classification] || '';
+        if (text) whiteCell.innerHTML += `<span class="move-list-icon ${history[i].classification}">${text}</span>`;
+      }
       whiteCell.addEventListener('click', () => {
         this.game.goToMove(i);
         if (this.onMoveClick) this.onMoveClick(i);
@@ -41,7 +50,11 @@ export class MoveList {
         blackCell.textContent = history[i + 1].san;
         blackCell.dataset.index = i + 1;
         if (i + 1 === currentIdx) blackCell.classList.add('active');
-        if (history[i + 1].classification) blackCell.classList.add(history[i + 1].classification);
+        if (history[i + 1].classification) {
+          blackCell.classList.add(history[i + 1].classification);
+          const text = glyphMap[history[i + 1].classification] || '';
+          if (text) blackCell.innerHTML += `<span class="move-list-icon ${history[i + 1].classification}">${text}</span>`;
+        }
         blackCell.addEventListener('click', () => {
           this.game.goToMove(i + 1);
           if (this.onMoveClick) this.onMoveClick(i + 1);

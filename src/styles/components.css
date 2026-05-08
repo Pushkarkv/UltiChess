@@ -183,3 +183,30 @@
 .game-status { font-size: var(--text-sm); }
 .status-label { color: var(--color-text-tertiary); }
 .status-value { font-weight: 600; }
+
+/* Review Panel & Glyphs */
+.move-glyph { position: absolute; top: -4px; right: -4px; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-primary); font-size: 13px; font-weight: 800; color: white; z-index: 10; border: 2px solid var(--board-border); box-shadow: var(--shadow-sm); }
+.move-glyph.brilliant { background: var(--color-brilliant); }
+.move-glyph.great { background: var(--color-great); }
+.move-glyph.best, .move-glyph.good { background: var(--color-good); }
+.move-glyph.inaccuracy { background: var(--color-inaccuracy); }
+.move-glyph.mistake { background: var(--color-mistake); }
+.move-glyph.blunder { background: var(--color-blunder); }
+.review-summary { display: flex; flex-direction: column; gap: var(--space-4); }
+.review-header { text-align: center; font-size: var(--text-lg); font-weight: 700; margin-bottom: var(--space-2); }
+.accuracy-container { display: flex; justify-content: space-around; padding: var(--space-4) 0; border-bottom: 1px solid var(--glass-border); }
+.accuracy-circle { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); }
+.accuracy-value { font-size: var(--text-2xl); font-weight: 800; }
+.accuracy-label { font-size: var(--text-sm); color: var(--color-text-secondary); }
+.review-stats { display: flex; flex-direction: column; gap: var(--space-2); padding: 0 var(--space-2); }
+.stat-row { display: flex; justify-content: space-between; align-items: center; padding: var(--space-2) var(--space-3); border-radius: var(--radius-sm); background: var(--color-surface); }
+.stat-label { display: flex; align-items: center; gap: var(--space-2); font-weight: 600; font-size: var(--text-sm); }
+.stat-count { font-family: var(--font-mono); font-size: var(--text-sm); font-weight: 700; }
+.move-list-icon { display: inline-block; padding: 2px 4px; border-radius: 4px; font-size: 10px; font-weight: 800; color: white; margin-left: 6px; }
+.move-list-icon.brilliant { background: var(--color-brilliant); }
+.move-list-icon.great { background: var(--color-great); }
+.move-list-icon.best, .move-list-icon.good { background: var(--color-good); }
+.move-list-icon.inaccuracy { background: var(--color-inaccuracy); }
+.move-list-icon.mistake { background: var(--color-mistake); }
+.move-list-icon.blunder { background: var(--color-blunder); }
+

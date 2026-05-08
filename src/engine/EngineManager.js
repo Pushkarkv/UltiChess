@@ -21,54 +21,7 @@ export class EngineManager {
   async init() {
     return new Promise((resolve, reject) => {
       try {
-        // Try to load stockfish from local or CDN
-        const workerCode = `
-          let engine = null;
-          let wasmSupported = typeof WebAssembly === 'object';
-          
-          // Simple UCI engine simulation for when WASM isn't available
-          class SimpleEngine {
-            constructor() {
-              this.depth = 0;
-            }
-            
-            postMessage(msg) {
-              if (msg === 'uci') {
-                setTimeout(() => self.postMessage('uciok'), 10);
-              } else if (msg === 'isready') {
-                setTimeout(() => self.postMessage('readyok'), 10);
-              } else if (msg.startsWith('go')) {
-                this.search(msg);
-              }
-            }
-            
-            search(cmd) {
-              const depthMatch = cmd.match(/depth (\\d+)/);
-              const maxDepth = depthMatch ? parseInt(depthMatch[1]) : 15;
-              let d = 1;
-              const interval = setInterval(() => {
-                if (d > maxDepth) {
-                  clearInterval(interval);
-                  self.postMessage('bestmove e2e4');
-                  return;
-                }
-                const score = Math.floor(Math.random() * 100 - 50);
-                self.postMessage('info depth ' + d + ' score cp ' + score + ' pv e2e4 e7e5');
-                d++;
-              }, 50);
-            }
-          }
-          
-          self.onmessage = function(e) {
-            if (!engine) {
-              engine = new SimpleEngine();
-            }
-            engine.postMessage(e.data);
-          };
-        `;
-        
-        const blob = new Blob([workerCode], { type: 'application/javascript' });
-        this.worker = new Worker(URL.createObjectURL(blob));
+        this.worker = new Worker('/engine/stockfish.js');
         
         this.worker.onmessage = (e) => this.handleMessage(e.data);
         this.worker.onerror = (e) => console.error('Engine error:', e);

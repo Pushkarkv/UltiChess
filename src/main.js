@@ -525,6 +525,7 @@ class ChessApp {
         if (this.game.history[i]) this.game.history[i].classification = m.classification;
       });
       this.moveList.render();
+      this.board.update();
       
       if (summaryEl) {
         summaryEl.innerHTML = `

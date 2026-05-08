@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Ultimate Chess Platform — Play, analyze, train, and battle with Stockfish engine integration, custom pieces, and AI arena." />
+  <meta name="theme-color" content="#0a0a0f" />
+  <title>Ultimate Chess Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>♟</text></svg>" />
+</head>
+<body>
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div class="loader-content">
+      <div class="chess-loader">
+        <div class="loader-piece">♚</div>
+        <div class="loader-piece">♛</div>
+        <div class="loader-piece">♜</div>
+        <div class="loader-piece">♝</div>
+      </div>
+      <h1 class="loader-title">Ultimate Chess</h1>
+      <p class="loader-subtitle">Loading engine...</p>
+      <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- Main Application -->
+  <div id="app">
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <span class="logo-icon">♟</span>
+          <span class="logo-text">UltiChess</span>
+        </div>
+        <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Toggle sidebar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="#play" class="nav-item active" data-route="play" id="nav-play">
+          <span class="nav-icon">♔</span><span class="nav-label">Play</span>
+        </a>
+        <a href="#analyze" class="nav-item" data-route="analyze" id="nav-analyze">
+          <span class="nav-icon">🔍</span><span class="nav-label">Analyze</span>
+        </a>
+        <a href="#review" class="nav-item" data-route="review" id="nav-review">
+          <span class="nav-icon">📊</span><span class="nav-label">Review</span>
+        </a>
+        <a href="#train" class="nav-item" data-route="train" id="nav-train">
+          <span class="nav-icon">🧠</span><span class="nav-label">Train</span>
+        </a>
+        <a href="#battle" class="nav-item" data-route="battle" id="nav-battle">
+          <span class="nav-icon">⚔️</span><span class="nav-label">AI Battle</span>
+        </a>
+        <a href="#variants" class="nav-item" data-route="variants" id="nav-variants">
+          <span class="nav-icon">🎭</span><span class="nav-label">Variants</span>
+        </a>
+        <a href="#puzzles" class="nav-item" data-route="puzzles" id="nav-puzzles">
+          <span class="nav-icon">🧩</span><span class="nav-label">Puzzles</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <button id="btn-settings" class="nav-item" aria-label="Settings">
+          <span class="nav-icon">⚙️</span><span class="nav-label">Settings</span>
+        </button>
+        <button id="btn-theme-toggle" class="nav-item" aria-label="Toggle theme">
+          <span class="nav-icon">🌙</span><span class="nav-label">Theme</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main id="main-content" class="main-content">
+      <!-- Toolbar -->
+      <header id="toolbar" class="toolbar">
+        <div class="toolbar-left">
+          <button id="btn-mobile-menu" class="btn-icon mobile-only" aria-label="Menu">☰</button>
+          <h2 id="page-title" class="page-title">Play Chess</h2>
+        </div>
+        <div class="toolbar-center">
+          <div id="player-info-black" class="player-info">
+            <span class="player-name">Black</span>
+            <span id="clock-black" class="clock">10:00</span>
+          </div>
+          <span class="vs-label">vs</span>
+          <div id="player-info-white" class="player-info">
+            <span class="player-name">White</span>
+            <span id="clock-white" class="clock">10:00</span>
+          </div>
+        </div>
+        <div class="toolbar-right">
+          <button id="btn-new-game" class="btn btn-primary" title="New Game">
+            <span>New Game</span>
+          </button>
+          <button id="btn-flip" class="btn-icon" title="Flip Board">🔄</button>
+          <button id="btn-undo" class="btn-icon" title="Undo Move">↩</button>
+          <button id="btn-redo" class="btn-icon" title="Redo Move">↪</button>
+        </div>
+      </header>
+
+      <!-- Game Area -->
+      <div id="game-area" class="game-area">
+        <!-- Eval Bar -->
+        <div id="eval-bar-container" class="eval-bar-container">
+          <div id="eval-bar" class="eval-bar">
+            <div id="eval-bar-fill" class="eval-bar-fill"></div>
+          </div>
+          <span id="eval-score" class="eval-score">0.0</span>
+        </div>
+
+        <!-- Board Container -->
+        <div id="board-wrapper" class="board-wrapper">
+          <div id="board-container" class="board-container">
+            <!-- Coordinates -->
+            <div id="coords-files" class="coords coords-files"></div>
+            <div id="coords-ranks" class="coords coords-ranks"></div>
+            <!-- The board grid -->
+            <div id="chess-board" class="chess-board"></div>
+            <!-- Overlay for arrows and highlights -->
+            <svg id="arrow-overlay" class="arrow-overlay"></svg>
+            <!-- Promotion picker -->
+            <div id="promotion-picker" class="promotion-picker hidden"></div>
+          </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div id="right-panel" class="right-panel">
+          <!-- Tab Navigation -->
+          <div class="panel-tabs">
+            <button class="panel-tab active" data-tab="moves" id="tab-moves">Moves</button>
+            <button class="panel-tab" data-tab="analysis" id="tab-analysis">Analysis</button>
+            <button class="panel-tab" data-tab="info" id="tab-info">Info</button>
+          </div>
+
+          <!-- Moves Tab -->
+          <div id="panel-moves" class="panel-content active">
+            <div id="move-list" class="move-list"></div>
+          </div>
+
+          <!-- Analysis Tab -->
+          <div id="panel-analysis" class="panel-content">
+            <div class="analysis-header">
+              <button id="btn-toggle-engine" class="btn btn-sm btn-accent">▶ Start Engine</button>
+              <div class="engine-info">
+                <span id="engine-depth" class="engine-stat">Depth: —</span>
+                <span id="engine-nps" class="engine-stat">NPS: —</span>
+              </div>
+            </div>
+            <div id="engine-lines" class="engine-lines">
+              <div class="engine-placeholder">Click "Start Engine" to begin analysis</div>
+            </div>
+          </div>
+
+          <!-- Info Tab -->
+          <div id="panel-info" class="panel-content">
+            <div class="info-section">
+              <h4>Game Controls</h4>
+              <div class="info-grid">
+                <button id="btn-import-pgn" class="btn btn-sm btn-outline">Import PGN</button>
+                <button id="btn-export-pgn" class="btn btn-sm btn-outline">Export PGN</button>
+                <button id="btn-copy-fen" class="btn btn-sm btn-outline">Copy FEN</button>
+                <button id="btn-setup-pos" class="btn btn-sm btn-outline">Setup Position</button>
+              </div>
+            </div>
+            <div class="info-section">
+              <h4>Game Status</h4>
+              <div id="game-status" class="game-status">
+                <span class="status-label">Status:</span>
+                <span id="status-text" class="status-value">White to move</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Eval Graph -->
+          <div id="eval-graph-container" class="eval-graph-container">
+            <canvas id="eval-graph" class="eval-graph"></canvas>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="panel-actions">
+            <button id="btn-move-first" class="btn-icon" title="First move">⏮</button>
+            <button id="btn-move-prev" class="btn-icon" title="Previous move">◀</button>
+            <button id="btn-move-next" class="btn-icon" title="Next move">▶</button>
+            <button id="btn-move-last" class="btn-icon" title="Last move">⏭</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modals -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div id="modal-content" class="modal-content"></div>
+  </div>
+
+  <!-- Toast Notifications -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

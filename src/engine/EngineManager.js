@@ -161,9 +161,23 @@ export class EngineManager {
       if (this.elo) {
         this.send('setoption name UCI_LimitStrength value true');
         this.send('setoption name UCI_Elo value ' + this.elo);
+        let skill = 20;
+        if (this.elo <= 1000) skill = 0;
+        else if (this.elo <= 1200) skill = 3;
+        else if (this.elo <= 1500) skill = 7;
+        else if (this.elo <= 1800) skill = 10;
+        else if (this.elo <= 2000) skill = 14;
+        else if (this.elo <= 2500) skill = 18;
+        this.send('setoption name Skill Level value ' + skill);
       }
       if (timeMs) {
-        this.send('go movetime ' + timeMs);
+        let depthLimit = '';
+        if (this.elo && this.elo <= 1000) depthLimit = ' depth 2';
+        else if (this.elo && this.elo <= 1200) depthLimit = ' depth 4';
+        else if (this.elo && this.elo <= 1500) depthLimit = ' depth 7';
+        else if (this.elo && this.elo <= 1800) depthLimit = ' depth 10';
+        
+        this.send('go movetime ' + timeMs + depthLimit);
       } else {
         this.send('go depth ' + this.targetDepth);
       }
@@ -180,8 +194,17 @@ export class EngineManager {
     if (elo) {
       this.send('setoption name UCI_LimitStrength value true');
       this.send('setoption name UCI_Elo value ' + elo);
+      let skill = 20;
+      if (this.elo <= 1000) skill = 0;
+      else if (this.elo <= 1200) skill = 3;
+      else if (this.elo <= 1500) skill = 7;
+      else if (this.elo <= 1800) skill = 10;
+      else if (this.elo <= 2000) skill = 14;
+      else if (this.elo <= 2500) skill = 18;
+      this.send('setoption name Skill Level value ' + skill);
     } else {
       this.send('setoption name UCI_LimitStrength value false');
+      this.send('setoption name Skill Level value 20');
     }
   }
 

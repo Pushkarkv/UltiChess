@@ -98,6 +98,10 @@ export class EngineManager {
       info.type = 'mate';
     }
     
+    if (this.currentTurn === 'b' && info.score !== undefined) {
+      info.score = -info.score;
+    }
+    
     // Parse PV
     const pvMatch = msg.match(/pv (.+)/);
     if (pvMatch) info.pv = pvMatch[1].split(' ');
@@ -140,6 +144,7 @@ export class EngineManager {
     if (!this.ready) return;
     this.stop();
     this.pvLines = [];
+    this.currentTurn = fen.split(' ')[1] || 'w';
     this.analyzing = true;
     this.send('position fen ' + fen);
     if (this.multiPV > 1) this.send('setoption name MultiPV value ' + this.multiPV);
@@ -150,6 +155,7 @@ export class EngineManager {
     return new Promise((resolve) => {
       if (!this.ready) { resolve(null); return; }
       this.stop();
+      this.currentTurn = fen.split(' ')[1] || 'w';
       this.moveCallback = resolve;
       this.send('position fen ' + fen);
       if (this.elo) {

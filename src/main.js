@@ -542,27 +542,27 @@ class ChessApp {
           <div class="review-stats">
             <div class="stat-row">
               <span class="stat-label"><span class="move-list-icon brilliant">!!</span> Brilliant</span>
-              <span class="stat-count">${summary.stats.white.brilliant} - ${summary.stats.black.brilliant}</span>
+              <span class="stat-count">${summary.whiteCounts.brilliant} - ${summary.blackCounts.brilliant}</span>
             </div>
             <div class="stat-row">
               <span class="stat-label"><span class="move-list-icon great">!</span> Great</span>
-              <span class="stat-count">${summary.stats.white.great} - ${summary.stats.black.great}</span>
+              <span class="stat-count">${summary.whiteCounts.great} - ${summary.blackCounts.great}</span>
             </div>
             <div class="stat-row">
               <span class="stat-label"><span class="move-list-icon best">★</span> Best Move</span>
-              <span class="stat-count">${summary.stats.white.best} - ${summary.stats.black.best}</span>
+              <span class="stat-count">${summary.whiteCounts.best} - ${summary.blackCounts.best}</span>
             </div>
             <div class="stat-row">
               <span class="stat-label"><span class="move-list-icon inaccuracy">?!</span> Inaccuracy</span>
-              <span class="stat-count">${summary.stats.white.inaccuracy} - ${summary.stats.black.inaccuracy}</span>
+              <span class="stat-count">${summary.whiteCounts.inaccuracy} - ${summary.blackCounts.inaccuracy}</span>
             </div>
             <div class="stat-row">
               <span class="stat-label"><span class="move-list-icon mistake">?</span> Mistake</span>
-              <span class="stat-count">${summary.stats.white.mistake} - ${summary.stats.black.mistake}</span>
+              <span class="stat-count">${summary.whiteCounts.mistake} - ${summary.blackCounts.mistake}</span>
             </div>
             <div class="stat-row">
               <span class="stat-label"><span class="move-list-icon blunder">??</span> Blunder</span>
-              <span class="stat-count">${summary.stats.white.blunder} - ${summary.stats.black.blunder}</span>
+              <span class="stat-count">${summary.whiteCounts.blunder} - ${summary.blackCounts.blunder}</span>
             </div>
           </div>
         `;

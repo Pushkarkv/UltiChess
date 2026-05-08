@@ -44,8 +44,9 @@ export class GameReview {
       if (loss > 3) classification = 'blunder';
       else if (loss > 1.5) classification = 'mistake';
       else if (loss > 0.5) classification = 'inaccuracy';
-      else if (loss < -0.5) classification = 'great';
       else if (loss < -1) classification = 'brilliant';
+      else if (loss < -0.5) classification = 'great';
+      else if (loss <= 0.1) classification = 'best';
 
       this.results.push({
         index: i,
@@ -108,7 +109,7 @@ export class GameReview {
   }
 
   countClassifications(results) {
-    const counts = { brilliant: 0, great: 0, good: 0, inaccuracy: 0, mistake: 0, blunder: 0 };
+    const counts = { brilliant: 0, great: 0, best: 0, good: 0, inaccuracy: 0, mistake: 0, blunder: 0 };
     results.forEach(r => { if (counts[r.classification] !== undefined) counts[r.classification]++; });
     return counts;
   }

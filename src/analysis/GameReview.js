@@ -24,9 +24,14 @@ export class GameReview {
       chess.move(history[i].move);
       const fenAfter = chess.fen();
 
-      // Get engine eval for the position after the move
-      const evalResult = await this.getEval(fenAfter, 15);
-      const score = evalResult ? evalResult.score : 0;
+      // Use cached continuous evaluation if it exists and reached decent depth
+      let score = 0;
+      if (history[i].eval !== undefined && history[i].evalDepth >= 8) {
+        score = history[i].eval;
+      } else {
+        const evalResult = await this.getEval(fenAfter, 12);
+        score = evalResult ? evalResult.score : 0;
+      }
       
       // For black's perspective, negate
       const adjustedScore = history[i].color === 'b' ? -score : score;
@@ -84,8 +89,15 @@ export class GameReview {
       const origOnBestMove = this.engine.onBestMove;
       let lastEval = null;
       
+      const timeout = setTimeout(() => {
+        this.engine.onEval = origOnEval;
+        this.engine.onBestMove = origOnBestMove;
+        resolve(lastEval);
+      }, 5000);
+      
       this.engine.onEval = (ev) => { lastEval = ev; };
       this.engine.onBestMove = () => {
+        clearTimeout(timeout);
         this.engine.onEval = origOnEval;
         this.engine.onBestMove = origOnBestMove;
         resolve(lastEval);

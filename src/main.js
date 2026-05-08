@@ -93,6 +93,15 @@ class ChessApp {
 
     this.engine.onEval = (ev) => {
       this.evalBar.update(ev);
+      
+      // Real-time continuous review caching
+      const state = this.game.getState();
+      const currentIdx = state.currentMoveIndex - 1;
+      if (currentIdx >= 0 && state.history[currentIdx]) {
+        state.history[currentIdx].eval = ev.score;
+        state.history[currentIdx].evalType = ev.type;
+        state.history[currentIdx].evalDepth = this.engine.currentDepth;
+      }
     };
 
     this.engine.onInfo = (info) => {

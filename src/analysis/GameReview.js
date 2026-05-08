@@ -15,7 +15,8 @@ export class GameReview {
     this.results = [];
     
     const chess = new Chess();
-    let prevEval = 0;
+    let prevEval = 0.3; // Approx starting eval
+    let prevType = 'cp';
 
     for (let i = 0; i < history.length; i++) {
       if (this.onProgress) this.onProgress(i, history.length);
@@ -26,27 +27,36 @@ export class GameReview {
 
       // Use cached continuous evaluation if it exists and reached decent depth
       let score = 0;
+      let type = 'cp';
       if (history[i].eval !== undefined && history[i].evalDepth >= 8) {
         score = history[i].eval;
+        type = history[i].evalType || 'cp';
       } else {
         const evalResult = await this.getEval(fenAfter, 12);
         score = evalResult ? evalResult.score : 0;
+        type = evalResult ? evalResult.type : 'cp';
       }
       
-      // For black's perspective, negate
-      const adjustedScore = history[i].color === 'b' ? -score : score;
-      const adjustedPrev = history[i].color === 'b' ? -prevEval : prevEval;
+      const winBefore = this.getWinPercent(prevEval, prevType);
+      const winAfter = this.getWinPercent(score, type);
       
-      // Calculate loss
-      const loss = adjustedPrev - adjustedScore;
+      // Calculate loss in terms of Win%. Positive means loss for the side that moved.
+      let loss = 0;
+      if (history[i].color === 'w') {
+        loss = winBefore - winAfter;
+      } else {
+        loss = winAfter - winBefore;
+      }
       
       let classification = 'good';
-      if (loss > 3) classification = 'blunder';
-      else if (loss > 1.5) classification = 'mistake';
-      else if (loss > 0.5) classification = 'inaccuracy';
-      else if (loss < -1) classification = 'brilliant';
-      else if (loss < -0.5) classification = 'great';
-      else if (loss <= 0.1) classification = 'best';
+      if (loss > 20) classification = 'blunder';
+      else if (loss > 10) classification = 'mistake';
+      else if (loss > 5) classification = 'inaccuracy';
+      else if (loss < -5) classification = 'brilliant';
+      else if (loss < -2) classification = 'great';
+      else if (loss <= 2) classification = 'best';
+
+      const accuracy = Math.max(0, Math.min(100, 103.1668 * Math.exp(-0.04354 * Math.max(0, loss)) - 3.1669));
 
       this.results.push({
         index: i,
@@ -54,11 +64,13 @@ export class GameReview {
         color: history[i].color,
         eval: score,
         loss,
+        accuracy,
         classification,
         fen: fenAfter
       });
 
       prevEval = score;
+      prevType = type;
     }
 
     // Calculate accuracy
@@ -67,8 +79,8 @@ export class GameReview {
     
     const calcAccuracy = (results) => {
       if (!results.length) return 100;
-      const avgLoss = results.reduce((sum, r) => sum + Math.max(0, r.loss), 0) / results.length;
-      return Math.max(0, Math.min(100, 100 - avgLoss * 15));
+      const totalAcc = results.reduce((sum, r) => sum + r.accuracy, 0);
+      return totalAcc / results.length;
     };
 
     this.reviewing = false;
@@ -112,5 +124,13 @@ export class GameReview {
     const counts = { brilliant: 0, great: 0, best: 0, good: 0, inaccuracy: 0, mistake: 0, blunder: 0 };
     results.forEach(r => { if (counts[r.classification] !== undefined) counts[r.classification]++; });
     return counts;
+  }
+
+  getWinPercent(score, type) {
+    if (type === 'mate') {
+      return score > 0 ? 100 : 0;
+    }
+    const cp = score * 100;
+    return 50 + 50 * (2 / (1 + Math.exp(-0.00368208 * cp)) - 1);
   }
 }
